@@ -145,3 +145,17 @@ RUN pip install stable-baselines
 # Test to verify if all required dependencies installed successfully or not.
 RUN python -c "import gym; import roboschool;"
 
+
+
+
+############################################
+# import atari roms http://www.atarimania.com/rom_collection_archive_atari_2600_roms.html
+############################################
+RUN apt-get install -y unrar unzip
+
+RUN curl -OL http://www.atarimania.com/roms/Roms.rar \ 
+    && unrar e -r ./Roms.rar \
+    && unzip ./ROMS.zip
+
+RUN python -m atari_py.import_roms /opt/ROMS
+
