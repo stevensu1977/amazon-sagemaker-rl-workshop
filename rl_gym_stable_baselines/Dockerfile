@@ -41,7 +41,7 @@ RUN pip install --upgrade pip && pip install tensorflow==1.15.0
 
 # Install Horovod, temporarily using CUDA stubs （打开HOROVOD_WITHOUT_GLOO)
 RUN ldconfig /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs && \
-    HOROVOD_CPU_ALLREDUCE=MPI HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITHOUT_GLOO=1 pip install --no-cache-dir horovod && \
+    HOROVOD_CPU_ALLREDUCE=MPI HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITHOUT_GLOO=1 pip install --no-cache-dir horovod==0.21.3 && \
     ldconfig
 
 # Create a wrapper for OpenMPI to allow running as root by default
@@ -112,9 +112,6 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-RUN curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py
 
 RUN pip install --upgrade \
     pip \
@@ -137,7 +134,8 @@ RUN pip install -e ${BASELINES_PATH}
 ############################################
 # Stable Baselines
 ############################################
-RUN pip install stable-baselines
+RUN pip install stable-baselines 
+RUN pip install atari-py==0.2.9
 
 ############################################
 # Test Installation
@@ -154,8 +152,8 @@ RUN python -c "import gym; import roboschool;"
 RUN apt-get install -y unrar unzip
 
 RUN curl -OL http://www.atarimania.com/roms/Roms.rar \ 
-    && unrar e -r ./Roms.rar \
-    && unzip ./ROMS.zip
+    && mkdir ROMS \
+    && unrar e -o+ ./Roms.rar ROMS/ 
 
 RUN python -m atari_py.import_roms /opt/ROMS
 
